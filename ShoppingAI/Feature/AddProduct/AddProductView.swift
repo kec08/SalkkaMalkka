@@ -154,7 +154,7 @@ struct AddProductView: View {
 
                 let newProduct = Product(
                     id: UUID(),
-                    image: selectedImage,
+                    imageData: selectedImage?.jpegData(compressionQuality: 0.8),
                     name: productName,
                     price: productPrice,
                     url: trimmedURL,

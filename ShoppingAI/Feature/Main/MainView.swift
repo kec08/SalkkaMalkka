@@ -1,7 +1,9 @@
 import SwiftUI
 
 struct MainView: View {
-    @State private var products: [Product] = []
+    private static let storageKey = "savedProducts"
+
+    @State private var products: [Product] = MainView.loadProducts()
     @State private var isShowingAddProduct = false
     @State private var productForAdd: Product? = nil
     @State private var productForEdit: Product? = nil
@@ -9,6 +11,17 @@ struct MainView: View {
     @State private var isShowingAIAnswer = false
     @State private var isShowingClearAlert = false
     @State private var editMode: EditMode = .inactive
+
+    private static func loadProducts() -> [Product] {
+        guard let data = UserDefaults.standard.data(forKey: storageKey) else { return [] }
+        return (try? JSONDecoder().decode([Product].self, from: data)) ?? []
+    }
+
+    private static func saveProducts(_ products: [Product]) {
+        if let data = try? JSONEncoder().encode(products) {
+            UserDefaults.standard.set(data, forKey: storageKey)
+        }
+    }
 
     var body: some View {
         NavigationView {
@@ -94,6 +107,9 @@ struct MainView: View {
                 Button("비우기", role: .destructive) {
                     aiTargetProducts.removeAll()
                 }
+            }
+            .onChange(of: products) { _, newValue in
+                MainView.saveProducts(newValue)
             }
         }
     }

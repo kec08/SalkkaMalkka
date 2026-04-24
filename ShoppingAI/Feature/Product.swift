@@ -6,10 +6,11 @@
 //
 
 import SwiftUI
+import UIKit
 
-struct Product: Identifiable, Equatable {
+struct Product: Identifiable, Equatable, Codable {
     let id: UUID
-    var image: UIImage?
+    var imageData: Data?
     var name: String
     var price: String
     var url: String
@@ -18,8 +19,13 @@ struct Product: Identifiable, Equatable {
     var features: String
     var category: String
 
-    // Equatable
     static func == (lhs: Product, rhs: Product) -> Bool {
         lhs.id == rhs.id
+    }
+}
+
+extension Product {
+    var image: UIImage? {
+        imageData.flatMap { UIImage(data: $0) }
     }
 }
